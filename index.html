@@ -7,27 +7,35 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Pattern Generator</h1>
-    </header>
-    <main>
-        <div class="controls">
-            <h2>Controls</h2>
+    <canvas id="patternCanvas" width="400" height="400"></canvas>
+    <div class="controls">
+        <div>
             <label for="patternType">Pattern Type:</label>
             <select id="patternType">
                 <option value="spirograph">Spirograph</option>
-                <option value="grid">Grid Pattern</option>
-                <!-- Add more pattern options here -->
+                <option value="grid">Grid</option>
+                <!-- Add more pattern types here -->
             </select>
-            <label for="colorSelect">Color:</label>
-            <input type="color" id="colorSelect" value="#ff0000">
+        </div>
+        <div>
+            <label for="patternColor">Pattern Color:</label>
+            <input type="color" id="patternColor" value="#ff0000">
+        </div>
+        <div>
+            <label for="patternSize">Pattern Size:</label>
+            <input type="range" id="patternSize" min="50" max="200" value="100">
+        </div>
+        <div>
+            <label for="patternSpeed">Pattern Speed:</label>
+            <input type="range" id="patternSpeed" min="0.5" max="2" step="0.1" value="1">
+        </div>
+        <div>
             <button id="generatePattern">Generate Pattern</button>
             <button id="clearCanvas">Clear Canvas</button>
             <button id="savePattern">Save Pattern</button>
             <button id="loadPattern">Load Pattern</button>
         </div>
-        <canvas id="patternCanvas" width="600" height="400"></canvas>
-    </main>
+    </div>
     <script src="script.js"></script>
 </body>
 </html>
