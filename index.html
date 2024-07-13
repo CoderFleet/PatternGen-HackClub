@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pattern Generator</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Pattern Generator</h1>
+    </header>
+    <main>
+        <div class="controls">
+            <h2>Controls</h2>
+            <label for="patternType">Pattern Type:</label>
+            <select id="patternType">
+                <option value="spirograph">Spirograph</option>
+                <option value="grid">Grid Pattern</option>
+                <!-- Add more pattern options here -->
+            </select>
+            <label for="colorSelect">Color:</label>
+            <input type="color" id="colorSelect" value="#ff0000">
+            <button id="generatePattern">Generate Pattern</button>
+            <button id="clearCanvas">Clear Canvas</button>
+            <button id="savePattern">Save Pattern</button>
+            <button id="loadPattern">Load Pattern</button>
+        </div>
+        <canvas id="patternCanvas" width="600" height="400"></canvas>
+    </main>
+    <script src="script.js"></script>
+</body>
+</html>
