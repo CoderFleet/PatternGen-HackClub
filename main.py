@@ -4,24 +4,25 @@ import sys
 pygame.init()
 
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600
-BACKGROUND_COLOR = (0, 0, 0)  # Black background
-GRID_COLOR = (50, 50, 50)  # Dark gray grid color
+BACKGROUND_COLOR = (0, 0, 0)
+GRID_COLOR = (50, 50, 50)
 GRID_SPACING = 50
 
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("Pattern Generator")
 
-# Pattern types
 PATTERN_GRID = "Grid"
 PATTERN_CIRCLE = "Circle"
 PATTERN_RECTANGLE = "Rectangle"
 PATTERN_SPIRAL = "Spiral"
 
 patterns = [PATTERN_GRID, PATTERN_CIRCLE, PATTERN_RECTANGLE, PATTERN_SPIRAL]
-current_pattern = PATTERN_GRID
-shape_filled = False  # Initially shapes are outline
+current_pattern = None
+shape_filled = False
+shapes = []
 
 def main():
+    global shapes
     running = True
 
     while running:
@@ -34,19 +35,15 @@ def main():
                 handle_mouse_click(event.pos)
 
         screen.fill(BACKGROUND_COLOR)
-        draw_grid()
+        draw_grid()  # Draw grid before any shapes
 
-        if current_pattern == PATTERN_GRID:
-            draw_grid_pattern()
-        elif current_pattern == PATTERN_CIRCLE:
-            draw_circle_pattern()
-        elif current_pattern == PATTERN_RECTANGLE:
-            draw_rectangle_pattern()
-        elif current_pattern == PATTERN_SPIRAL:
-            draw_spiral_pattern()
+        for shape in shapes:
+            draw_shape(shape)
 
         draw_pattern_menu()
         draw_fill_mode_button()
+        draw_clear_canvas_button()
+        draw_pattern_controls()
 
         pygame.display.flip()
 
@@ -66,21 +63,41 @@ def handle_key_event(key):
         current_pattern = PATTERN_SPIRAL
 
 def handle_mouse_click(pos):
-    global current_pattern, shape_filled
+    global shape_filled
 
     menu_rect = pygame.Rect(SCREEN_WIDTH - 200, 10, 190, 30)
     fill_button_rect = pygame.Rect(20, 20, 120, 30)
+    clear_button_rect = pygame.Rect(150, 20, 120, 30)
 
     if menu_rect.collidepoint(pos):
         x_offset = SCREEN_WIDTH - 200
         for idx, pattern in enumerate(patterns):
             pattern_rect = pygame.Rect(x_offset, 10, 60, 30)
             if pattern_rect.collidepoint(pos):
-                current_pattern = patterns[idx]
+                select_pattern(patterns[idx])
                 break
             x_offset += 70
     elif fill_button_rect.collidepoint(pos):
         shape_filled = not shape_filled
+    elif clear_button_rect.collidepoint(pos):
+        clear_canvas()
+
+def select_pattern(pattern):
+    global current_pattern, shapes
+
+    current_pattern = pattern
+    if current_pattern == PATTERN_GRID:
+        shapes.append({"type": "grid"})
+    elif current_pattern == PATTERN_CIRCLE:
+        shapes.append({"type": "circle"})
+    elif current_pattern == PATTERN_RECTANGLE:
+        shapes.append({"type": "rectangle"})
+    elif current_pattern == PATTERN_SPIRAL:
+        shapes.append({"type": "spiral"})
+
+def clear_canvas():
+    global shapes
+    shapes = []
 
 def draw_grid():
     for x in range(0, SCREEN_WIDTH, GRID_SPACING):
@@ -88,13 +105,21 @@ def draw_grid():
     for y in range(0, SCREEN_HEIGHT, GRID_SPACING):
         pygame.draw.line(screen, GRID_COLOR, (0, y), (SCREEN_WIDTH, y))
 
+def draw_shape(shape):
+    if shape["type"] == "grid":
+        draw_grid_pattern()
+    elif shape["type"] == "circle":
+        draw_circle_pattern()
+    elif shape["type"] == "rectangle":
+        draw_rectangle_pattern()
+    elif shape["type"] == "spiral":
+        draw_spiral_pattern()
+
 def draw_grid_pattern():
     for x in range(0, SCREEN_WIDTH, GRID_SPACING):
-        for y in range(0, SCREEN_HEIGHT, GRID_SPACING):
-            if shape_filled:
-                pygame.draw.rect(screen, (255, 255, 255), (x, y, GRID_SPACING, GRID_SPACING))
-            else:
-                pygame.draw.rect(screen, (255, 255, 255), (x, y, GRID_SPACING, GRID_SPACING), 2)
+        pygame.draw.line(screen, GRID_COLOR, (x, 0), (x, SCREEN_HEIGHT))
+    for y in range(0, SCREEN_HEIGHT, GRID_SPACING):
+        pygame.draw.line(screen, GRID_COLOR, (0, y), (SCREEN_WIDTH, y))
 
 def draw_circle_pattern():
     pattern_color = (255, 0, 0)
@@ -135,7 +160,7 @@ def draw_pattern_menu():
     menu_text = "Select Pattern: "
     x_offset = SCREEN_WIDTH - 200
 
-    pygame.draw.rect(screen, (100, 100, 100), (x_offset, 10, 190, 30))  # Menu background
+    pygame.draw.rect(screen, (100, 100, 100), (x_offset, 10, 190, 30))
 
     for pattern in patterns:
         pattern_text = font.render(pattern, True, (255, 255, 255))
@@ -148,9 +173,29 @@ def draw_fill_mode_button():
     button_text = "Toggle Fill/Outline"
     button_rect = pygame.Rect(20, 20, 120, 30)
 
-    pygame.draw.rect(screen, (100, 100, 100), button_rect)  # Button background
+    pygame.draw.rect(screen, (100, 100, 100), button_rect)
     text = font.render(button_text, True, (255, 255, 255))
     text_rect = text.get_rect(center=button_rect.center)
+    screen.blit(text, text_rect)
+
+def draw_clear_canvas_button():
+    font = pygame.font.SysFont(None, 24)
+    button_text = "Clear Canvas"
+    button_rect = pygame.Rect(150, 20, 120, 30)
+
+    pygame.draw.rect(screen, (100, 100, 100), button_rect)
+    text = font.render(button_text, True, (255, 255, 255))
+    text_rect = text.get_rect(center=button_rect.center)
+    screen.blit(text, text_rect)
+
+def draw_pattern_controls():
+    font = pygame.font.SysFont(None, 24)
+    controls_text = "Pattern Controls:"
+    controls_rect = pygame.Rect(20, SCREEN_HEIGHT - 50, 200, 30)
+    pygame.draw.rect(screen, (100, 100, 100), controls_rect)
+
+    text = font.render(controls_text, True, (255, 255, 255))
+    text_rect = text.get_rect(center=controls_rect.center)
     screen.blit(text, text_rect)
 
 if __name__ == "__main__":
